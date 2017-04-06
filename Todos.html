@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Todos</title>
+    <link rel="stylesheet" href="bootstrap/content/Content/bootstrap.min.css">
+    <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+<div class="title row">
+    <div class="col-xs-0 col-lg-4"></div>
+    <div class="title-text col-xs-12 col-lg-4 text-center"><h2>todos</h2></div>
+    <div class="col-xs-0 col-lg-4"></div>
+</div>
+<div class="title row">
+    <div class="col-xs-1 col-lg-4"></div>
+    <div class="col-xs-10 col-lg-4 text-center">
+        <input id="newTodoText" class="new-todo" placeholder="What needs to be done?" value="" data-bind="event:{keypress: newTodoHandler}" autofocus>
+    </div>
+    <div class="col-xs-1 col-lg-4"></div>
+</div>
+
+<div class="todo-list" data-bind="foreach: todos">
+    <div class="title row">
+        <div class="col-xs-1 col-lg-4"><input class="round toggle" type="checkbox"></div>
+        <div class="col-xs-10 col-lg-4">
+            <input class="edit new-todo" data-bind="value : content">
+        </div>
+        <div class="col-xs-1 col-lg-4">
+            <div class="destroy" data-bind="click: $root.destroyHandler, attr: { name: id}">&#10005</div>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    <p class="text-center">Double-click to edit a todo</p>
+    <p class="text-center">Created by Yuliya Guzarevich</p>
+</div>
+
+<script id="todoItem" type="text/x-jquery-tmpl">
+        <div class="title row">
+        <div class="col-xs-1 col-lg-4"><input class="round toggle" type="checkbox"></div>
+        <div class="col-xs-10 col-lg-4">
+            <input class="edit new-todo" value="first">
+        </div>
+        <div class="col-xs-1 col-lg-4"><div class="destroy">&#10005</div></div>
+    </div>
+</script>
+<script src="bootstrap/content/Scripts/jquery-1.10.2.min.js"></script>
+<script src="scripts/knockout.min.js"></script>
+<script src="scripts/jquery.tmpl.min.js"></script>
+<script src="scripts/todos.js"></script>
+</body>
+</html>
