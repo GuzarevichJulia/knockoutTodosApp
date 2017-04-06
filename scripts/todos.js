@@ -1,3 +1,5 @@
+var storage = new Storage();
+
 function TodoItem(id, content, isDone) {
     this.id = id;
     this.content = content;
@@ -16,7 +18,7 @@ function ViewModel() {
     };
 
     that.destroyHandler = function (data, event) {
-        that.todos.splice(0,1);
+        deleteTodo(event.currentTarget.name);
         return true;
     }
 
@@ -28,10 +30,17 @@ function ViewModel() {
 }
 
 var viewModel = new ViewModel();
+ko.applyBindings(viewModel);
+
+function deleteTodo(id) {
+    viewModel.todos.remove(function (todo) {
+        return todo.id == id;
+    });
+}
 
 function addTodo (value) {
     var newTodo = new TodoItem(5, value, false);
     viewModel.todos.push(newTodo);
+    storage.put(newTodo);
 }
 
-ko.applyBindings(viewModel);
