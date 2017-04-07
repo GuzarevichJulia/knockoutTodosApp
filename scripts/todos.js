@@ -1,9 +1,17 @@
-var storage = new Storage();
+var storage;
+var todosFromStorage;
+var sha1;
+
+function init() {
+    storage = storageManager;
+    todosFromStorage = storage.getTodos();
+    sha1 = new Hashes.SHA1
+}
 
 function TodoItem(id, content, isDone) {
     this.id = id;
     this.content = content;
-    this.isXMLDoc = isDone;
+    this.isCompleted = isDone;
 }
 
 function ViewModel() {
@@ -22,25 +30,24 @@ function ViewModel() {
         return true;
     }
 
-    that.todos = ko.observableArray([
-        new TodoItem(2, "second", false),
-        new TodoItem(3, "third", false),
-        new TodoItem(4, "forth", false)
-    ])
+    that.todos = ko.observableArray(todosFromStorage)
 }
-
-var viewModel = new ViewModel();
-ko.applyBindings(viewModel);
 
 function deleteTodo(id) {
     viewModel.todos.remove(function (todo) {
         return todo.id == id;
     });
+    storage.save(viewModel.todos);
 }
 
 function addTodo (value) {
-    var newTodo = new TodoItem(5, value, false);
+    var id = sha1.hex(value);
+    var newTodo = new TodoItem(id, value, false);
     viewModel.todos.push(newTodo);
-    storage.put(newTodo);
+    storage.save(viewModel.todos);
 }
+
+init();
+var viewModel = new ViewModel();
+ko.applyBindings(viewModel);
 
