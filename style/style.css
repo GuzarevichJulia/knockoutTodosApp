@@ -1,8 +1,8 @@
-body{
-    background-color:  #f5f5f5;
+body {
+    background-color: #f5f5f5;
 }
 
-.title{
+.title {
     margin-top: 40px;
 }
 
@@ -11,38 +11,38 @@ h2 {
     font-size: 100px;
 }
 
-input.new-todo:focus{
+input.new-todo:focus {
     outline: none !important;
-    border:1px solid red;
+    border: 1px solid red;
     box-shadow: 0 0 10px #fd9300;
 }
 
-input.toggle:focus{
+input.toggle:focus {
     outline: none !important;
 }
 
-input{
-    border:2px solid #ddd;
+input {
+    border: 2px solid #ddd;
     width: 100%;
 }
 
-.toggle{
+.toggle {
     width: 50px;
 }
 
-.new-todo{
+.new-todo {
     padding: 16px 16px 16px 60px;
     border-radius: 10px;
     position: relative;
     font-size: 20px;
 }
 
-.todo-list .toggle{
+.todo-list .toggle {
     margin-top: 15px;
     margin-left: 90%;
 }
 
-.footer{
+.footer {
     margin: 40px;
     color: #e6b29d;
 }
@@ -62,8 +62,36 @@ input{
     border: 3px solid #fd9300;
 }
 
-.destroy{
+.destroy {
     padding-top: 20px;
     cursor: pointer;
     -webkit-appearance: none;
+}
+
+.completed {
+    text-decoration: line-through;
+    color: #979797;
+}
+
+.filters{
+    border: 2px solid #ddd;
+    margin: 0 5px;
+    padding: 16px 0;
+    border-radius: 10px;
+    background-color: white;
+}
+
+button{
+    border: 0px;
+    background: none;
+}
+
+button:hover{
+    text-decoration: underline;
+}
+
+button:focus{
+    outline: none !important;
+    border: 1px solid red;
+    box-shadow: 0 0 10px #fd9300;
 }

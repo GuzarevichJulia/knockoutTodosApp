@@ -20,16 +20,31 @@
     <div class="col-xs-1 col-lg-4"></div>
 </div>
 
-<div class="todo-list" data-bind="foreach: todos">
+<div class="todo-list" data-bind="foreach: displayedTodos">
     <div class="title row">
-        <div class="col-xs-1 col-lg-4"><input class="round toggle" type="checkbox"></div>
+        <div class="col-xs-1 col-lg-4"><input class="round toggle" type="checkbox" data-bind="attr: { name: id}, click: $root.completeHandler"></div>
         <div class="col-xs-10 col-lg-4">
-            <input class="edit new-todo" data-bind="value : content">
+            <input class="edit new-todo" data-bind="value : content, css: { completed:  isCompleted}">
         </div>
         <div class="col-xs-1 col-lg-4">
             <div class="destroy" data-bind="click: $root.destroyHandler, attr: { name: id}">&#10005</div>
         </div>
     </div>
+</div>
+
+<div class="title row">
+    <div class="col-xs-1 col-lg-4"></div>
+    <div class="col-xs-10 col-lg-4">
+        <div class="row table-bordered filters">
+            <div class="col-xs-1 col-lg-1 text-right" data-bind="text : activeCount"></div>
+            <div class="col-xs-2 col-lg-2">items left</div>
+            <div class="col-xs-2 col-lg-2 text-right"><button data-bind="click: showAll">All</button></div>
+            <div class="col-xs-2 col-lg-2 text-center"><button data-bind="click: showActive">Active</button></div>
+            <div class="col-xs-2 col-lg-2 text-left"><button data-bind="click: showCompleted">Completed</button></div>
+            <div class="col-xs-3 col-lg-3 text-right"><button data-bind="click: clearCompleted">Clear completed</button></div>
+        </div>
+    </div>
+    <div class="col-xs-1 col-lg-4"></div>
 </div>
 
 <div class="footer">
