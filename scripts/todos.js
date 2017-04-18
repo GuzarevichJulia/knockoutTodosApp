@@ -1,125 +1,158 @@
-var storage;
-var allTodosFromStorage;
-var sha1;
+(function () {
 
-function init() {
-    storage = storageManager;
-    allTodosFromStorage = storage.getTodos();
-    sha1 = new Hashes.SHA1;
-}
+    "use strict";
 
-function updateArrays() {
-    viewModel.activeTodos(viewModel.todos().filter(function (t) {
-        return t.isCompleted == false;
-    }));
-    viewModel.completedTodos(viewModel.todos().filter(function (t) {
-        return t.isCompleted == true;
-    }));
-    viewModel.activeCount(viewModel.activeTodos().length);
-}
+    var storage;
+    var allTodosFromStorage;
 
-function TodoItem(id, content, isDone) {
-    this.id = id;
-    this.content = content;
-    this.isCompleted = isDone;
-}
-
-function completeTodo(id) {
-    var todo = ko.utils.arrayFirst(viewModel.todos(), function (t) {
-        return t.id == id;
-    });
-
-    if(todo.isCompleted == true) {
-        todo.isCompleted = false;
+    function init() {
+        storage = storageManager;
+        allTodosFromStorage = storage.getTodos();
+        viewModel.todos(ko.utils.arrayMap(allTodosFromStorage, function (t) {
+            return new TodoItem(t.id, t.content, t.isCompleted)
+        }));
+        updateArrays();
+        viewModel.displayedTodos(viewModel.todos());
     }
-    else {
-        todo.isCompleted = true;
+
+    function updateArrays() {
+        viewModel.activeTodos(viewModel.todos().filter(function (t) {
+            return t.isCompleted() == false;
+        }));
+        viewModel.completedTodos(viewModel.todos().filter(function (t) {
+            return t.isCompleted() == true;
+        }));
+        viewModel.activeCount(viewModel.activeTodos().length);
+        viewModel.isDisplayed((viewModel.todos().length > 0));
     }
-    updateArrays();
-    storage.save(viewModel.todos);
-    console.log(viewModel.todos());
-}
 
-function deleteTodo(id) {
-    var todo = ko.utils.arrayFirst(viewModel.todos(), function (t) {
-        return t.id == id;
-    });
-    if (todo.isCompleted == false){
-        var previousAllCount = viewModel.activeCount();
-        viewModel.activeCount(previousAllCount - 1);
+    function TodoItem(id, content, isDone) {
+        this.id = ko.observable(id);
+        this.content = ko.observable(content);
+        this.isCompleted = ko.observable(isDone);
     }
-    viewModel.todos.remove(todo);
-    updateArrays();
-    viewModel.displayedTodos(viewModel.todos());
-    storage.save(viewModel.todos);
-}
 
-function addTodo (value) {
-    var id = sha1.hex(value);
-    var newTodo = new TodoItem(id, value, false);
-    viewModel.todos.push(newTodo);
-    viewModel.displayedTodos(viewModel.todos());
-    storage.save(viewModel.todos);
-    updateArrays();
-}
+    function completeTodo(id) {
+        var todo = ko.utils.arrayFirst(viewModel.todos(), function (t) {
+            return t.id() == id;
+        });
 
-function clearCompletedTodos() {
-    for(var i = 0; i < viewModel.completedTodos().length; i++){
-        viewModel.todos.remove(viewModel.completedTodos()[i]);
+        todo.isCompleted(todo.isCompleted() == true ? false : true);
+        updateArrays();
+        storage.save(viewModel.todos);
     }
-    storage.save(viewModel.todos);
-    updateArrays();
-    viewModel.displayedTodos(viewModel.todos());
-}
 
-init();
+    function deleteTodo(id) {
+        var todo = ko.utils.arrayFirst(viewModel.todos(), function (t) {
+            return t.id() == id;
+        });
 
-var viewModel = {
-    that : this,
-    newTodoHandler : function (data, event) {
-        var inputElement = event.currentTarget;
-        if (event.keyCode === 13) {
-            addTodo(inputElement.value);
-            inputElement.value="";
+        if (todo.isCompleted() == false) {
+            var previousAllCount = viewModel.activeCount();
+            viewModel.activeCount(previousAllCount - 1);
         }
-        return true;
-    },
+        viewModel.todos.remove(todo);
+        updateArrays();
+        viewModel.displayedTodos(viewModel.todos());
+        storage.save(viewModel.todos);
+    }
 
-    completeHandler : function (data, event) {
-        var element = event.currentTarget;
-        completeTodo(element.name);
-        return true;
-    },
+    function addTodo(value) {
+        var date = new Date();
+        var id = date.getTime();
+        var newTodo = new TodoItem(id, value, false);
+        viewModel.todos.push(newTodo);
+        viewModel.displayedTodos(viewModel.todos());
+        storage.save(viewModel.todos);
+        updateArrays();
+    }
 
-    destroyHandler : function (data, event) {
-        deleteTodo(event.currentTarget.name);
-        return true;
-    },
+    function clearCompletedTodos() {
+        for (var i = 0; i < viewModel.completedTodos().length; i++) {
+            viewModel.todos.remove(viewModel.completedTodos()[i]);
+        }
+        storage.save(viewModel.todos);
+        updateArrays();
+        viewModel.displayedTodos(viewModel.todos());
+    }
 
-    showAll : function () {
-        this.displayedTodos(this.todos());
-    },
+    function ViewModel() {
+        function newTodoHandler(data, event) {
+            var inputElement = event.currentTarget;
+            if (event.keyCode === 13) {
+                var value = (inputElement.value).trim();
+                if (value != "") {
+                    addTodo(value);
+                }
+                inputElement.value = "";
+            }
+            return true;
+        };
 
-    showActive : function () {
-        this.displayedTodos(this.activeTodos());
-    },
+        function completeHandler(data, event) {
+            var element = event.currentTarget;
+            completeTodo(element.name);
+            return true;
+        };
 
-    showCompleted : function () {
-        this.displayedTodos(this.completedTodos());
-    },
+        function destroyHandler(data, event) {
+            deleteTodo(event.currentTarget.name);
+            return true;
+        };
 
-    clearCompleted : function () {
-        clearCompletedTodos();
-        return true;
-    },
+        function showAll() {
+            this.displayedTodos(this.todos());
+        };
 
-    todos : ko.observableArray(allTodosFromStorage),
-    activeTodos : ko.observableArray(),
-    completedTodos : ko.observableArray(),
-    displayedTodos : ko.observableArray(allTodosFromStorage),
-    activeCount : ko.observable(0)
-}
+        function showActive() {
+            this.displayedTodos(this.activeTodos());
+        };
 
-updateArrays();
-ko.applyBindings(viewModel);
+        function showCompleted() {
+            this.displayedTodos(this.completedTodos());
+        };
 
+        function clearCompleted() {
+            clearCompletedTodos();
+            return true;
+        };
+
+        function saveChanges() {
+            var element = event.currentTarget;
+            var value = (element.value).trim();
+            if(value == "")
+            {
+                deleteTodo(element.id);
+            }
+            storage.save(viewModel.todos);
+        };
+
+        var todos = ko.observableArray();
+        var activeTodos = ko.observableArray();
+        var completedTodos = ko.observableArray();
+        var displayedTodos = ko.observableArray();
+        var activeCount = ko.observable(0);
+        var isDisplayed = ko.observable();
+
+        return {
+            newTodoHandler: newTodoHandler,
+            completeHandler: completeHandler,
+            destroyHandler: destroyHandler,
+            showAll: showAll,
+            showActive: showActive,
+            showCompleted: showCompleted,
+            clearCompleted: clearCompleted,
+            saveChanges: saveChanges,
+            todos: todos,
+            activeTodos: activeTodos,
+            completedTodos: completedTodos,
+            displayedTodos: displayedTodos,
+            activeCount: activeCount,
+            isDisplayed: isDisplayed
+        };
+    };
+
+    var viewModel = new ViewModel();
+    init();
+    ko.applyBindings(viewModel);
+}());

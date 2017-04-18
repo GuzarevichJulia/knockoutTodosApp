@@ -58,8 +58,8 @@ input {
     cursor: pointer;
 }
 
-.round:checked {
-    border: 3px solid #fd9300;
+.checked {
+    border: 5px solid #fd9300;
 }
 
 .destroy {
@@ -94,4 +94,5 @@ button:focus{
     outline: none !important;
     border: 1px solid red;
     box-shadow: 0 0 10px #fd9300;
+    border-radius: 6px;
 }

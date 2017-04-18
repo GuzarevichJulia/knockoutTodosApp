@@ -22,9 +22,11 @@
 
 <div class="todo-list" data-bind="foreach: displayedTodos">
     <div class="title row">
-        <div class="col-xs-1 col-lg-4"><input class="round toggle" type="checkbox" data-bind="attr: { name: id}, click: $root.completeHandler"></div>
+        <div class="col-xs-1 col-lg-4">
+            <input class="round toggle" type="checkbox" data-bind="attr: { name: id}, click: $root.completeHandler, css: {checked: isCompleted}">
+        </div>
         <div class="col-xs-10 col-lg-4">
-            <input class="edit new-todo" data-bind="value : content, css: { completed:  isCompleted}">
+            <input class="edit new-todo" data-bind="textInput : content, event: {change: $root.saveChanges}, css: { completed: isCompleted }, attr: { id: id}">
         </div>
         <div class="col-xs-1 col-lg-4">
             <div class="destroy" data-bind="click: $root.destroyHandler, attr: { name: id}">&#10005</div>
@@ -32,7 +34,7 @@
     </div>
 </div>
 
-<div class="title row">
+<div class="title row" data-bind="visible: isDisplayed">
     <div class="col-xs-1 col-lg-4"></div>
     <div class="col-xs-10 col-lg-4">
         <div class="row table-bordered filters">
@@ -48,23 +50,13 @@
 </div>
 
 <div class="footer">
-    <p class="text-center">Double-click to edit a todo</p>
+    <p class="text-center">Click to edit a todo</p>
     <p class="text-center">Created by Yuliya Guzarevich</p>
 </div>
 
-<script id="todoItem" type="text/x-jquery-tmpl">
-        <div class="title row">
-        <div class="col-xs-1 col-lg-4"><input class="round toggle" type="checkbox"></div>
-        <div class="col-xs-10 col-lg-4">
-            <input class="edit new-todo" value="first">
-        </div>
-        <div class="col-xs-1 col-lg-4"><div class="destroy">&#10005</div></div>
-    </div>
-</script>
 <script src="bootstrap/content/Scripts/jquery-1.10.2.min.js"></script>
 <script src="scripts/knockout.min.js"></script>
 <script src="scripts/jquery.tmpl.min.js"></script>
-<script src="scripts/hashes.min.js"></script>
 <script src="scripts/storage.js"></script>
 <script src="scripts/todos.js"></script>
 </body>

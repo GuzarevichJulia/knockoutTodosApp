@@ -1,6 +1,6 @@
 var storageManager = (function () {
     var storage = localStorage;
-    var key = "mtodos";
+    var key = "myTodos";
     var todosArray = [];
 
     init();
